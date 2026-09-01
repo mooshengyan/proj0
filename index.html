@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="CS180 Project 0 — Becoming Friends with Your Camera: perspective, focal length, architectural compression, and the dolly zoom." />
+  <title>CS180 Project 0 — Becoming Friends with Your Camera</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --paper: #fffdf8;
+      --ink: #17202a;
+      --muted: #66717d;
+      --line: #d9d4c8;
+      --accent: #245a8d;
+      --accent-soft: #e8f0f7;
+      --shadow: 0 18px 50px rgba(25, 35, 45, .10);
+      --radius: 22px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(36,90,141,.08), transparent 28rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+    }
+
+    a { color: inherit; }
+    img, video { max-width: 100%; display: block; }
+
+    .shell { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+    }
+    .topbar .shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      gap: 20px;
+    }
+    .brand {
+      font-weight: 800;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .92rem;
+      padding: 8px 11px;
+      border-radius: 999px;
+    }
+    nav a:hover { background: var(--paper); color: var(--ink); }
+
+    header.hero {
+      padding: 96px 0 72px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 7px 11px;
+      border: 1px solid #b9c8d6;
+      border-radius: 999px;
+      background: rgba(255,255,255,.45);
+      color: var(--accent);
+      font-size: .79rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(36,90,141,.10);
+    }
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6.7rem);
+      line-height: .96;
+      letter-spacing: -.045em;
+      font-weight: 500;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    }
+    .hero-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.55);
+      font-size: .86rem;
+      color: #46525d;
+    }
+
+    main { padding: 10px 0 90px; }
+    section.project-section {
+      scroll-margin-top: 85px;
+      padding: 84px 0 86px;
+      border-bottom: 1px solid var(--line);
+    }
+    section.project-section:last-child { border-bottom: 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 28px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+    .section-num {
+      color: var(--accent);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 4rem;
+      line-height: 1;
+      letter-spacing: -.05em;
+    }
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1.05;
+      font-weight: 500;
+      letter-spacing: -.035em;
+    }
+    .dek {
+      margin: 14px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 1.06rem;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+    figure.photo-card {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .media-frame {
+      position: relative;
+      overflow: hidden;
+      background: #ddd;
+    }
+    .portrait .media-frame { aspect-ratio: 3 / 4; }
+    .architecture .media-frame { aspect-ratio: 3 / 4; }
+    .media-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+    figure.photo-card:hover img { transform: scale(1.015); }
+    figcaption { padding: 18px 20px 20px; }
+    .caption-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .caption-title { font-weight: 800; letter-spacing: -.01em; }
+    .camera-data {
+      color: var(--accent);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .83rem;
+      background: var(--accent-soft);
+      border-radius: 8px;
+      padding: 4px 7px;
+    }
+    .caption-note { margin-top: 7px; color: var(--muted); font-size: .92rem; }
+
+    .explanation {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(300px, 1.1fr);
+      gap: 24px;
+      margin-top: 26px;
+    }
+    .callout, .body-copy {
+      border-radius: 18px;
+      padding: 24px;
+    }
+    .callout {
+      background: var(--accent);
+      color: white;
+    }
+    .callout .label {
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .8;
+    }
+    .callout .big {
+      margin-top: 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1.18;
+    }
+    .equation {
+      margin-top: 18px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92rem;
+      opacity: .9;
+    }
+    .body-copy {
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+    .body-copy p { margin: 0; }
+    .body-copy p + p { margin-top: 12px; }
+    .tiny-note {
+      margin: 13px 2px 0;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .dolly-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+    .gif-card, .dolly-copy {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .gif-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .gif-caption { padding: 14px 18px 17px; color: var(--muted); font-size: .9rem; }
+    .dolly-copy { padding: 26px; }
+    .dolly-copy h3 { margin: 0 0 9px; font-size: 1.25rem; }
+    .dolly-copy p { margin: 0; color: #45515c; }
+    .dolly-copy p + p { margin-top: 13px; }
+
+    .frame-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-top: 18px;
+    }
+    .frame-strip img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 34px 0 48px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 780px) {
+      .shell { width: min(100% - 24px, var(--max)); }
+      .topbar .shell { align-items: flex-start; padding: 12px 0; }
+      nav { display: none; }
+      header.hero { padding: 70px 0 54px; }
+      .section-head { grid-template-columns: 1fr; gap: 8px; }
+      .section-num { font-size: 2.7rem; }
+      .photo-grid, .explanation, .dolly-wrap { grid-template-columns: 1fr; }
+      section.project-section { padding: 62px 0; }
+    }
+
+    @media print {
+      .topbar { display: none; }
+      body { background: white; }
+      .shell { width: 100%; max-width: 100%; }
+      header.hero { padding-top: 20px; }
+      figure.photo-card, .gif-card, .dolly-copy { box-shadow: none; break-inside: avoid; }
+      section.project-section { break-before: page; }
+      section.project-section:first-of-type { break-before: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="shell">
+      <div class="brand">CS180 · Project 0</div>
+      <nav aria-label="Project sections">
+        <a href="#selfie">01 Selfie</a>
+        <a href="#architecture">02 Architecture</a>
+        <a href="#dolly">03 Dolly Zoom</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="shell">
+      <div class="eyebrow">Becoming Friends with Your Camera</div>
+      <h1>Perspective is about where the camera is.</h1>
+      <p>
+        Three small experiments with a smartphone camera: a close-vs-distant portrait,
+        architectural perspective compression, and a dolly zoom. Together they show how
+        camera position changes perspective while focal length controls framing.
+      </p>
+      <div class="hero-meta">
+        <span class="pill">CS180 · Intro to Computer Vision & Computational Photography</span>
+        <span class="pill">Samsung Galaxy S25+</span>
+        <span class="pill">Project 0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="project-section portrait" id="selfie">
+      <div class="section-head">
+        <div class="section-num">01</div>
+        <div>
+          <h2>Selfie: the wrong way vs. the right way</h2>
+          <p class="dek">
+            I first photographed my face from very close at 1×. Then I stepped back and used
+            4× zoom, keeping my face approximately the same size in the frame.
+          </p>
+        </div>
+      </div>
+
+      <div class="photo-grid">
+        <figure class="photo-card">
+          <div class="media-frame">
+            <img src="assets/selfie-close-1x.jpg" alt="Close portrait photographed from a short camera-to-face distance at 1x zoom" />
+          </div>
+          <figcaption>
+            <div class="caption-row">
+              <span class="caption-title">Close + no zoom</span>
+              <span class="camera-data">≈24 mm eq @ ≈25 cm</span>
+            </div>
+            <div class="caption-note">The nose and center of the face project larger relative to the ears and sides of the head.</div>
+          </figcaption>
+        </figure>
+
+        <figure class="photo-card">
+          <div class="media-frame">
+            <img src="assets/selfie-far-4x.jpg" alt="Portrait photographed from farther away using 4x zoom on a Samsung Galaxy S25 Plus" />
+          </div>
+          <figcaption>
+            <div class="caption-row">
+              <span class="caption-title">Far + 4× zoom</span>
+              <span class="camera-data">≈96 mm eq @ ≈100 cm</span>
+            </div>
+            <div class="caption-note">Stepping back makes the depth differences across the face small compared with the total camera distance.</div>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="explanation">
+        <div class="callout">
+          <div class="label">Core idea</div>
+          <div class="big">The apparent “selfie distortion” comes mainly from camera distance, not zoom by itself.</div>
+          <div class="equation">same framing ⇒ apparent size ∝ focal length / distance</div>
+        </div>
+        <div class="body-copy">
+          <p>
+            In the close image, the camera is only a short distance from my face. A few centimeters of real depth—such as the
+            nose sitting in front of the ears—becomes a large fraction of the camera-to-subject distance. Because projected size
+            changes inversely with depth, the closest features become disproportionately large and the face looks more stretched.
+          </p>
+          <p>
+            With the 4× image, I moved roughly four times farther away and zoomed in to restore nearly the same framing. From that
+            farther viewpoint, the relative distance from the camera to the nose, cheeks, and ears is much more similar, so their
+            projected proportions are closer together and the portrait looks flatter and more natural.
+          </p>
+        </div>
+      </div>
+      <p class="tiny-note">
+        Camera-note estimate: the Galaxy S25+ 1× main camera is about 24 mm full-frame equivalent. A 4× field of view is therefore
+        about 96 mm equivalent framing. The phone has a 3× optical telephoto lens, so 4× also includes a digital crop. The uploaded
+        images do not contain usable EXIF distance metadata, so the centimeter values are approximate; keeping the face the same
+        size implies the 4× shot was about four times farther away.
+      </p>
+    </section>
+
+    <section class="project-section architecture" id="architecture">
+      <div class="section-head">
+        <div class="section-num">02</div>
+        <div>
+          <h2>Architectural perspective compression</h2>
+          <p class="dek">
+            I reversed the portrait experiment: first I photographed the building from farther away with zoom, then walked toward
+            it and photographed it again without zoom while keeping the building roughly the same size in the frame.
+          </p>
+        </div>
+      </div>
+
+      <div class="photo-grid">
+        <figure class="photo-card">
+          <div class="media-frame">
+            <img src="assets/building-far-zoom.jpg" alt="Building facade photographed from farther away with zoom" />
+          </div>
+          <figcaption>
+            <div class="caption-row">
+              <span class="caption-title">Far + zoom</span>
+              <span class="camera-data">compressed perspective</span>
+            </div>
+            <div class="caption-note">Depth differences occupy a smaller fraction of the total viewing distance, so the facade looks flatter.</div>
+          </figcaption>
+        </figure>
+
+        <figure class="photo-card">
+          <div class="media-frame">
+            <img src="assets/building-close-1x.jpg" alt="Building facade photographed from closer range without zoom" />
+          </div>
+          <figcaption>
+            <div class="caption-row">
+              <span class="caption-title">Close + no zoom</span>
+              <span class="camera-data">stronger perspective</span>
+            </div>
+            <div class="caption-note">The near corner grows relative to the farther parts, making depth and converging geometry more noticeable.</div>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="explanation">
+        <div class="callout">
+          <div class="label">What changes</div>
+          <div class="big">Moving farther away makes rays from different depths more nearly parallel.</div>
+          <div class="equation">large camera distance ⇒ smaller relative depth differences</div>
+        </div>
+        <div class="body-copy">
+          <p>
+            In the far, zoomed image, the distances from the camera to the near and far parts of the building are relatively similar.
+            Their magnifications are therefore similar too, which reduces the visual change in scale with depth. The result is the
+            familiar “telephoto compression” look.
+          </p>
+          <p>
+            After walking closer, the near side of the building becomes much closer to the camera than the farther side. That larger
+            depth ratio makes the near geometry expand relative to the far geometry, exaggerating receding lines and making the scene
+            feel deeper. Zoom mainly lets both versions keep similar overall framing; the viewpoint produces the perspective change.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-section" id="dolly">
+      <div class="section-head">
+        <div class="section-num">03</div>
+        <div>
+          <h2>The dolly zoom</h2>
+          <p class="dek">
+            For the final experiment, I changed camera distance and zoom together. The stuffed animal stays roughly the same size
+            while the surrounding scene visibly changes scale and depth.
+          </p>
+        </div>
+      </div>
+
+      <div class="dolly-wrap">
+        <figure class="gif-card">
+          <img src="assets/dollyzoom.gif" alt="Animated dolly zoom sequence centered on a stuffed animal" />
+          <figcaption class="gif-caption">Four captured views, looped forward and backward to make the perspective change easy to compare.</figcaption>
+        </figure>
+
+        <div class="dolly-copy">
+          <h3>Why the background moves while the subject stays put</h3>
+          <p>
+            A dolly zoom combines two effects that normally happen together but can be made to cancel for one chosen subject. Moving
+            the camera changes perspective: the relative apparent sizes of the subject and background change because they lie at
+            different depths.
+          </p>
+          <p>
+            Zooming changes magnification. By adjusting zoom in the opposite direction while moving, I compensate for the change in
+            the stuffed animal's size. Its framing stays approximately constant, but the background cannot be kept constant at the
+            same time, so it appears to stretch or compress around the subject.
+          </p>
+          <div class="frame-strip" aria-label="Four still frames from the dolly zoom">
+            <img src="assets/dolly-frame-1.jpg" alt="Dolly zoom frame 1" />
+            <img src="assets/dolly-frame-2.jpg" alt="Dolly zoom frame 2" />
+            <img src="assets/dolly-frame-3.jpg" alt="Dolly zoom frame 3" />
+            <img src="assets/dolly-frame-4.jpg" alt="Dolly zoom frame 4" />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      CS180 · Project 0 · Becoming Friends with Your Camera
+    </div>
+  </footer>
+</body>
+</html>
