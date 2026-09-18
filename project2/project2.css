@@ -1,0 +1,68 @@
+.project2-page .project2-hero { grid-template-columns: 1.3fr 0.75fr; gap: 75px; }
+.project2-page .project2-hero img { aspect-ratio: 1; max-height: 380px; object-fit: contain; }
+.project2-page .project-intro { max-width: 900px; padding: 4px 0 45px; }
+.project2-page .report-section { border-top: 1px solid var(--line); padding: 58px 0; scroll-margin-top: 20px; }
+.project2-page .report-section > p { max-width: 900px; }
+.project2-page .report-section h2 { margin-top: 12px; }
+.project2-page .report-section h4 { font-size: 18px; margin: 28px 0 12px; font-weight: 600; }
+.project2-page .small-note { font-size: 13px; color: var(--muted); }
+.project2-page figure { margin: 27px 0; break-inside: avoid; }
+.project2-page figure img { display: block; width: 100%; object-fit: contain; }
+.project2-page .report-section > figure { max-width: 1020px; }
+.project2-page .figure-tall { max-width: 820px !important; }
+.project2-page .figure-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin: 25px 0; max-width: 1000px; }
+.project2-page .figure-grid figure { margin: 0; }
+.project2-page .figure-grid img { max-height: 410px; width: 100%; object-fit: contain; background: var(--soft); }
+.project2-page .figure-grid:has(> figure:nth-child(3):last-child),
+.project2-page .figure-grid:has(> figure:nth-child(5):last-child) { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.project2-page .stack-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin: 22px 0; max-width: 1000px; }
+.project2-page .stack-tile { margin: 0; }
+.project2-page .stack-tile figcaption { padding-top: 5px; font-size: 12px; }
+.project2-page pre { background: var(--soft); border-left: 3px solid var(--accent); padding: 22px; margin: 24px 0; overflow-x: auto; font-size: 13px; line-height: 1.55; }
+.project2-page code { font-family: Consolas,"Courier New",monospace; }
+.project2-page p code { font-size: 0.88em; background: var(--soft); padding: 2px 4px; overflow-wrap: anywhere; }
+.project2-page .equation { background: var(--soft); padding: 18px 22px; border-left: 3px solid var(--accent); font-family: "Cambria Math",Georgia,serif; overflow-wrap: anywhere; }
+.project2-page .comparison .wide-figure { margin: 0; }
+@media(max-width:760px) {
+  .project2-page .project2-hero { grid-template-columns: 1fr; gap: 22px; }
+  .project2-page .project2-hero figure { max-width: 390px; }
+  .project2-page .report-section { padding: 36px 0; }
+  .project2-page .stack-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .project2-page pre { font-size: 11px; padding: 14px; }
+}
+@media(max-width:480px) {
+  .project2-page .figure-grid,
+  .project2-page .figure-grid:has(> figure:nth-child(3):last-child),
+  .project2-page .figure-grid:has(> figure:nth-child(5):last-child) { grid-template-columns: 1fr; }
+  .project2-page .nav { gap: 9px; font-size: 12px; }
+  .project2-page .brand { max-width: 145px; }
+}
+@media print {
+  .project2-page .hero { padding: 28px 0; gap: 28px; }
+  .project2-page .project2-hero { grid-template-columns: 1.3fr 0.75fr; }
+  .project2-page .hero img { max-height: 64mm; }
+  .project2-page h1 { font-size: 29pt; }
+  .project2-page .project-intro { padding-bottom: 0; }
+  .project2-page .report-section { break-before: page; padding: 12px 0 0; }
+  .project2-page .reflection { break-before: page; }
+  .project2-page .report-section h2 { font-size: 24pt; }
+  .project2-page figure { margin: 15px 0; }
+  .project2-page figure img { max-height: 208mm; object-fit: contain; }
+  .project2-page .figure-tall { max-width: 160mm !important; }
+  .project2-page .figure-tall img { max-height: 195mm; }
+  .project2-page .figure-grid { gap: 15px; margin: 15px 0; }
+  .project2-page .figure-grid figure { break-inside: avoid; }
+  .project2-page .figure-grid img { max-height: 67mm; width: 100%; }
+  .project2-page .stack-grid { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin: 14px 0; }
+  .project2-page .stack-tile { break-inside: avoid; }
+  .project2-page .stack-tile figcaption { font-size: 7pt; }
+  .project2-page .small-note { font-size: 8pt; }
+  .project2-page pre { font-size: 7.6pt; line-height: 1.36; padding: 13px; overflow: visible; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; }
+  .project2-page .equation { padding: 12px 16px; font-size: 10pt; }
+  .project2-page figcaption { font-size: 8pt; }
+  .project2-page .report-section h4 { break-after: avoid; font-size: 12pt; }
+  .project2-page h3 + p:has(+ .figure-grid) { break-after: avoid; }
+  .project2-page h3 + p + .figure-grid { break-inside: avoid; }
+  .project2-page .table-wrap { overflow: visible; }
+  .project2-page td,.project2-page th { font-size: 8.3pt; }
+}
