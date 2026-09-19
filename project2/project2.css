@@ -13,6 +13,7 @@
 .project2-page .figure-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin: 25px 0; max-width: 1000px; }
 .project2-page .figure-grid figure { margin: 0; }
 .project2-page .figure-grid img { max-height: 410px; width: 100%; object-fit: contain; background: var(--soft); }
+.project2-page .hybrid-result figure:first-child img { max-height: none; max-width: 433px; margin: 0 auto; }
 .project2-page .figure-grid:has(> figure:nth-child(3):last-child),
 .project2-page .figure-grid:has(> figure:nth-child(5):last-child) { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .project2-page .stack-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin: 22px 0; max-width: 1000px; }
@@ -53,6 +54,12 @@
   .project2-page .figure-grid { gap: 15px; margin: 15px 0; }
   .project2-page .figure-grid figure { break-inside: avoid; }
   .project2-page .figure-grid img { max-height: 67mm; width: 100%; }
+  .project2-page .hybrid-result { break-inside: avoid; }
+  .project2-page .hybrid-result figure:first-child img { max-height: 110mm; max-width: 100%; }
+  .project2-page .hybrid-secondary { break-before: page; }
+  .project2-page #part22 .figure-grid:has(img[src*="_fft_"]) { break-inside: avoid; }
+  .project2-page #part22 h4:has(+ p + .figure-grid img[src*="_fft_"]) { break-before: page; }
+  .project2-page #part22 h4 + p:has(+ .figure-grid img[src*="_fft_"]) { break-after: avoid; }
   .project2-page .stack-grid { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin: 14px 0; }
   .project2-page .stack-tile { break-inside: avoid; }
   .project2-page .stack-tile figcaption { font-size: 7pt; }
